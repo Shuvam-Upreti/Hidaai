@@ -3,6 +3,7 @@ using HidaaiAPI.Models.Domain;
 using HidaaiAPI.Models.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HidaaiAPI.Controllers
 {
@@ -18,10 +19,10 @@ namespace HidaaiAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             //Get data from Database- Domain Model
-            var regionsDomain = dbContext.Regions.ToList();
+            var regionsDomain = await dbContext.Regions.ToListAsync();
 
             //Map Domain model to DTOs
             var regionsDto = new List<RegionDto>();
@@ -43,10 +44,10 @@ namespace HidaaiAPI.Controllers
 
         [HttpGet]
         [Route("{id:Guid}")]
-        public IActionResult GetById([FromRoute] Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             //Get from domain model
-            var regionDomain = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            var regionDomain = await dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
             if (regionDomain == null)
             {
                 return NotFound();
@@ -67,7 +68,7 @@ namespace HidaaiAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] AddRegionRequestDto addRegionRequestDto)
+        public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //Map Dto to Domain model
             var regionDomainModel = new Region
@@ -78,8 +79,8 @@ namespace HidaaiAPI.Controllers
             };
 
             //Use Domain model to create region
-            dbContext.Regions.Add(regionDomainModel);
-            dbContext.SaveChanges();
+            await dbContext.Regions.AddAsync(regionDomainModel);
+            await dbContext.SaveChangesAsync();
 
             //Map Domain model back to DTo since we cannot return domain model to client
             var regionDto = new RegionDto
@@ -97,10 +98,10 @@ namespace HidaaiAPI.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
-        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             //check id region exist
-            var regionDomainModel = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            var regionDomainModel =await dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
             if (regionDomainModel == null)
             {
                 return NotFound();
@@ -110,7 +111,7 @@ namespace HidaaiAPI.Controllers
             regionDomainModel.Code = updateRegionRequestDto.Code;
             regionDomainModel.Name = updateRegionRequestDto.Name;
             regionDomainModel.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             //Convert Domain model to Dto
             var regionDto = new RegionDto
@@ -125,15 +126,15 @@ namespace HidaaiAPI.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
-        public IActionResult Delete([FromRoute]Guid id)
+        public async Task<IActionResult> Delete([FromRoute]Guid id)
         {
-            var regionDomainModel = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            var regionDomainModel = await dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
             if (regionDomainModel == null)
             {
                 return NotFound();
             }
             dbContext.Regions.Remove(regionDomainModel);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             return Ok();
         }
     }
