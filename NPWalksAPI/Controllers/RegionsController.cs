@@ -122,5 +122,19 @@ namespace HidaaiAPI.Controllers
             };
             return Ok(regionDto);
         }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public IActionResult Delete([FromRoute]Guid id)
+        {
+            var regionDomainModel = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            if (regionDomainModel == null)
+            {
+                return NotFound();
+            }
+            dbContext.Regions.Remove(regionDomainModel);
+            dbContext.SaveChanges();
+            return Ok();
+        }
     }
 }
