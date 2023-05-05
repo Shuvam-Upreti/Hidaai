@@ -65,5 +65,34 @@ namespace HidaaiAPI.Controllers
             return Ok(regionDto);
 
         }
+
+        [HttpPost]
+        public IActionResult Create([FromBody]AddRegionRequestDto addRegionRequestDto)
+        {
+            //Map Dto to Domain model
+            var regionDomainModel = new Region
+            {
+                Code = addRegionRequestDto.Code,
+                Name = addRegionRequestDto.Name,
+                RegionImageUrl = addRegionRequestDto.RegionImageUrl
+            };
+
+            //Use Domain model to create region
+            dbContext.Regions.Add(regionDomainModel);
+            dbContext.SaveChanges();
+
+            //Map Domain model back to DTo since we cannot return domain model to client
+            var regionDto = new RegionDto
+            {
+                Code = regionDomainModel.Code,
+                Name = regionDomainModel.Name,
+                RegionImageUrl = regionDomainModel.RegionImageUrl
+            };
+
+
+            //return ma nameof(get by id deko kinaki create vayera created vayeko wala return garna paryo single
+            //aarko new garera object banako jasma mathi ko created id ra banako naya ko id equal huna paryoo
+            return CreatedAtAction(nameof(GetById), new {id=regionDomainModel.Id}, regionDto);
+        }
     }
 }
