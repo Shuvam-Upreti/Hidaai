@@ -1,6 +1,7 @@
 ﻿using HidaaiAPI.Data;
 using HidaaiAPI.Models.Domain;
 using HidaaiAPI.Models.DTO;
+using HidaaiAPI.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,17 +13,19 @@ namespace HidaaiAPI.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly HidaaiDbContext dbContext;
+        private readonly IRegionRepository regionRepository;
 
-        public RegionsController(HidaaiDbContext dbContext)
+        public RegionsController(HidaaiDbContext dbContext,IRegionRepository regionRepository)
         {
             this.dbContext = dbContext;
+            this.regionRepository = regionRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             //Get data from Database- Domain Model
-            var regionsDomain = await dbContext.Regions.ToListAsync();
+            var regionsDomain = await regionRepository.GetAllAsync();
 
             //Map Domain model to DTOs
             var regionsDto = new List<RegionDto>();
@@ -47,7 +50,7 @@ namespace HidaaiAPI.Controllers
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             //Get from domain model
-            var regionDomain = await dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
+            var regionDomain = await regionRepository.GetById(id);
             if (regionDomain == null)
             {
                 return NotFound();

@@ -1,4 +1,5 @@
 using HidaaiAPI.Data;
+using HidaaiAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<HidaaiDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("HidaaiConnectionString")));
 
+builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
