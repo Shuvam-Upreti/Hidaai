@@ -98,13 +98,13 @@ namespace HidaaiAPI.Controllers
             await regionRepository.CreateAsync(regionDomainModel);
 
             //Map Domain model back to DTo since we cannot return domain model to client
-            var regionDto = new RegionDto
-            {
-                Code = regionDomainModel.Code,
-                Name = regionDomainModel.Name,
-                RegionImageUrl = regionDomainModel.RegionImageUrl
-            };
-            var regionDto = mapper.Map<AddRegionRequestDto>(regionDto);
+            //var regionDto = new RegionDto
+            //{
+            //    Code = regionDomainModel.Code,
+            //    Name = regionDomainModel.Name,
+            //    RegionImageUrl = regionDomainModel.RegionImageUrl
+            //};
+            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
 
             //return ma nameof(get by id deko kinaki create vayera created vayeko wala return garna paryo single
             //aarko new garera object banako jasma mathi ko created id ra banako naya ko id equal huna paryoo
@@ -115,13 +115,14 @@ namespace HidaaiAPI.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
-            //Map DTO to Domain model
-            var regionDomainModel = new Region
-            {
-                Code = updateRegionRequestDto.Code,
-                Name = updateRegionRequestDto.Name,
-                RegionImageUrl = updateRegionRequestDto.RegionImageUrl
-            };
+            ////Map DTO to Domain model
+            //var regionDomainModel = new Region
+            //{
+            //    Code = updateRegionRequestDto.Code,
+            //    Name = updateRegionRequestDto.Name,
+            //    RegionImageUrl = updateRegionRequestDto.RegionImageUrl
+            //};
+            var regionDomainModel = mapper.Map<Region>(updateRegionRequestDto);
 
             //check id region exist
             regionDomainModel= await regionRepository.UpdateAsync(id,regionDomainModel);
@@ -132,13 +133,15 @@ namespace HidaaiAPI.Controllers
             
             
             //Convert Domain model to Dto
-            var regionDto = new RegionDto
-            {
-                Id = regionDomainModel.Id,
-                Code = regionDomainModel.Code,
-                Name = regionDomainModel.Name,
-                RegionImageUrl = regionDomainModel.RegionImageUrl
-            };
+            //var regionDto = new RegionDto
+            //{
+            //    Id = regionDomainModel.Id,
+            //    Code = regionDomainModel.Code,
+            //    Name = regionDomainModel.Name,
+            //    RegionImageUrl = regionDomainModel.RegionImageUrl
+            //};
+            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
+
             return Ok(regionDto);
         }
 
@@ -151,7 +154,17 @@ namespace HidaaiAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok();
+
+            //Convert Domain model to Dto
+            //var regionDto = new RegionDto
+            //{
+            //    Id = regionDomainModel.Id,
+            //    Code = regionDomainModel.Code,
+            //    Name = regionDomainModel.Name,
+            //    RegionImageUrl = regionDomainModel.RegionImageUrl
+            //};
+            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
+            return Ok(regionDto);
         }
     }
 }
