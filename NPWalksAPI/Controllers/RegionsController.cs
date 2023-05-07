@@ -1,10 +1,12 @@
-﻿using HidaaiAPI.Data;
+﻿using AutoMapper;
+using HidaaiAPI.Data;
 using HidaaiAPI.Models.Domain;
 using HidaaiAPI.Models.DTO;
 using HidaaiAPI.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace HidaaiAPI.Controllers
 {
@@ -14,11 +16,13 @@ namespace HidaaiAPI.Controllers
     {
         private readonly HidaaiDbContext dbContext;
         private readonly IRegionRepository regionRepository;
+        private readonly IMapper mapper;
 
-        public RegionsController(HidaaiDbContext dbContext, IRegionRepository regionRepository)
+        public RegionsController(HidaaiDbContext dbContext, IRegionRepository regionRepository,IMapper mapper)
         {
             this.dbContext = dbContext;
             this.regionRepository = regionRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -28,17 +32,21 @@ namespace HidaaiAPI.Controllers
             var regionsDomain = await regionRepository.GetAllAsync();
 
             //Map Domain model to DTOs
-            var regionsDto = new List<RegionDto>();
-            foreach (var regionDomain in regionsDomain)
-            {
-                regionsDto.Add(new RegionDto()
-                {
-                    Id = regionDomain.Id,
-                    Code = regionDomain.Code,
-                    Name = regionDomain.Name,
-                    RegionImageUrl = regionDomain.RegionImageUrl
-                });
-            }
+            //var regionsDto = new List<RegionDto>();
+            //foreach (var regionDomain in regionsDomain)
+            //{
+            //    regionsDto.Add(new RegionDto()
+            //    {
+            //        Id = regionDomain.Id,
+            //        Code = regionDomain.Code,
+            //        Name = regionDomain.Name,
+            //        RegionImageUrl = regionDomain.RegionImageUrl
+            //    });
+            //}
+
+
+            //Map Domain model to DTOs
+            var regionsDto=mapper.Map<List<RegionDto>>(regionsDomain);
 
             //return DTOs
             return Ok(regionsDto);
