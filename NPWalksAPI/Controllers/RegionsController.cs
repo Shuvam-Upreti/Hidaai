@@ -65,13 +65,16 @@ namespace HidaaiAPI.Controllers
             }
 
             //Map Domain to Dto
-            var regionDto = new RegionDto
-            {
-                Id = regionDomain.Id,
-                Code = regionDomain.Code,
-                Name = regionDomain.Name,
-                RegionImageUrl = regionDomain.RegionImageUrl
-            };
+            //var regionDto = new RegionDto
+            //{
+            //    Id = regionDomain.Id,
+            //    Code = regionDomain.Code,
+            //    Name = regionDomain.Name,
+            //    RegionImageUrl = regionDomain.RegionImageUrl
+            //};
+
+            //map using auto mapper
+            var regionDto= mapper.Map<RegionDto>(regionDomain);
 
             //return dto
             return Ok(regionDto);
@@ -82,13 +85,15 @@ namespace HidaaiAPI.Controllers
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             //Map Dto to Domain model
-            var regionDomainModel = new Region
-            {
-                Code = addRegionRequestDto.Code,
-                Name = addRegionRequestDto.Name,
-                RegionImageUrl = addRegionRequestDto.RegionImageUrl
-            };
+            //var regionDomainModel = new Region
+            //{
+            //    Code = addRegionRequestDto.Code,
+            //    Name = addRegionRequestDto.Name,
+            //    RegionImageUrl = addRegionRequestDto.RegionImageUrl
+            //};
 
+            //mapping dto to domain
+            var regionDomainModel = mapper.Map<Region>(addRegionRequestDto);
             //Use Domain model to create region
             await regionRepository.CreateAsync(regionDomainModel);
 
@@ -99,7 +104,7 @@ namespace HidaaiAPI.Controllers
                 Name = regionDomainModel.Name,
                 RegionImageUrl = regionDomainModel.RegionImageUrl
             };
-
+            var regionDto = mapper.Map<AddRegionRequestDto>(regionDto);
 
             //return ma nameof(get by id deko kinaki create vayera created vayeko wala return garna paryo single
             //aarko new garera object banako jasma mathi ko created id ra banako naya ko id equal huna paryoo
