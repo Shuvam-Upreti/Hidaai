@@ -30,9 +30,17 @@ namespace HidaaiAPI.Repositories
             return region;
         }
 
-        public Task<Region> Delete(Guid id)
+        public async Task<Region> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+           var existingRegion = await dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
+            if (existingRegion == null)
+            {
+                return null;
+            }
+            dbContext.Regions.Remove(existingRegion);
+            await dbContext.SaveChangesAsync();
+
+            return existingRegion;
         }
 
 
@@ -47,7 +55,9 @@ namespace HidaaiAPI.Repositories
             existingRegion.Name = region.Name;
             existingRegion.RegionImageUrl = region.RegionImageUrl;
 
-            return region;
+            await dbContext.SaveChangesAsync();
+
+            return existingRegion;
 
         }
     }

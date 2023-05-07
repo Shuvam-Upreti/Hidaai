@@ -15,7 +15,7 @@ namespace HidaaiAPI.Controllers
         private readonly HidaaiDbContext dbContext;
         private readonly IRegionRepository regionRepository;
 
-        public RegionsController(HidaaiDbContext dbContext,IRegionRepository regionRepository)
+        public RegionsController(HidaaiDbContext dbContext, IRegionRepository regionRepository)
         {
             this.dbContext = dbContext;
             this.regionRepository = regionRepository;
@@ -50,7 +50,7 @@ namespace HidaaiAPI.Controllers
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             //Get from domain model
-            var regionDomain = await regionRepository.GetById(id);
+            var regionDomain = await regionRepository.GetByIdAsync(id);
             if (regionDomain == null)
             {
                 return NotFound();
@@ -82,8 +82,7 @@ namespace HidaaiAPI.Controllers
             };
 
             //Use Domain model to create region
-            await dbContext.Regions.AddAsync(regionDomainModel);
-            await dbContext.SaveChangesAsync();
+            await regionRepository.CreateAsync(regionDomainModel);
 
             //Map Domain model back to DTo since we cannot return domain model to client
             var regionDto = new RegionDto
@@ -103,19 +102,22 @@ namespace HidaaiAPI.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
+            //Map DTO to Domain model
+            var regionDomainModel = new Region
+            {
+                Code = updateRegionRequestDto.Code,
+                Name = updateRegionRequestDto.Name,
+                RegionImageUrl = updateRegionRequestDto.RegionImageUrl
+            };
+
             //check id region exist
-            var regionDomainModel =await dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
+            regionDomainModel= await regionRepository.UpdateAsync(id,regionDomainModel);
             if (regionDomainModel == null)
             {
                 return NotFound();
             }
-
-            //Map Dto to Domain Model
-            regionDomainModel.Code = updateRegionRequestDto.Code;
-            regionDomainModel.Name = updateRegionRequestDto.Name;
-            regionDomainModel.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
-            await dbContext.SaveChangesAsync();
-
+            
+            
             //Convert Domain model to Dto
             var regionDto = new RegionDto
             {
@@ -129,15 +131,13 @@ namespace HidaaiAPI.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> Delete([FromRoute]Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var regionDomainModel = await dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
+            var regionDomainModel = await regionRepository.DeleteAsync(id);
             if (regionDomainModel == null)
             {
                 return NotFound();
             }
-            dbContext.Regions.Remove(regionDomainModel);
-            await dbContext.SaveChangesAsync();
             return Ok();
         }
     }
