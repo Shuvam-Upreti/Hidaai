@@ -1,4 +1,5 @@
 using HidaaiAPI.Data;
+using HidaaiAPI.Mappings;
 using HidaaiAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<HidaaiDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("HidaaiConnectionString")));
 
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
