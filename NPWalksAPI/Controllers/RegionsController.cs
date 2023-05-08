@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HidaaiAPI.CustomActionFilters;
 using HidaaiAPI.Data;
 using HidaaiAPI.Models.Domain;
 using HidaaiAPI.Models.DTO;
@@ -18,7 +19,7 @@ namespace HidaaiAPI.Controllers
         private readonly IRegionRepository regionRepository;
         private readonly IMapper mapper;
 
-        public RegionsController(HidaaiDbContext dbContext, IRegionRepository regionRepository,IMapper mapper)
+        public RegionsController(HidaaiDbContext dbContext, IRegionRepository regionRepository, IMapper mapper)
         {
             this.dbContext = dbContext;
             this.regionRepository = regionRepository;
@@ -46,7 +47,7 @@ namespace HidaaiAPI.Controllers
 
 
             //Map Domain model to DTOs
-            var regionsDto=mapper.Map<List<RegionDto>>(regionsDomain);
+            var regionsDto = mapper.Map<List<RegionDto>>(regionsDomain);
 
             //return DTOs
             return Ok(regionsDto);
@@ -74,7 +75,7 @@ namespace HidaaiAPI.Controllers
             //};
 
             //map using auto mapper
-            var regionDto= mapper.Map<RegionDto>(regionDomain);
+            var regionDto = mapper.Map<RegionDto>(regionDomain);
 
             //return dto
             return Ok(regionDto);
@@ -82,10 +83,9 @@ namespace HidaaiAPI.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
-            if (ModelState.IsValid)
-            {
                 //Map Dto to Domain model
                 //var regionDomainModel = new Region
                 //{
@@ -111,45 +111,41 @@ namespace HidaaiAPI.Controllers
                 //return ma nameof(get by id deko kinaki create vayera created vayeko wala return garna paryo single
                 //aarko new garera object banako jasma mathi ko created id ra banako naya ko id equal huna paryoo
                 return CreatedAtAction(nameof(GetById), new { id = regionDomainModel.Id }, regionDto);
-            }
-            else
-            {
-                return BadRequest(ModelState);
-            }
         }
 
         [HttpPut]
         [Route("{id:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
-            ////Map DTO to Domain model
-            //var regionDomainModel = new Region
-            //{
-            //    Code = updateRegionRequestDto.Code,
-            //    Name = updateRegionRequestDto.Name,
-            //    RegionImageUrl = updateRegionRequestDto.RegionImageUrl
-            //};
-            var regionDomainModel = mapper.Map<Region>(updateRegionRequestDto);
+                ////Map DTO to Domain model
+                //var regionDomainModel = new Region
+                //{
+                //    Code = updateRegionRequestDto.Code,
+                //    Name = updateRegionRequestDto.Name,
+                //    RegionImageUrl = updateRegionRequestDto.RegionImageUrl
+                //};
+                var regionDomainModel = mapper.Map<Region>(updateRegionRequestDto);
 
-            //check id region exist
-            regionDomainModel= await regionRepository.UpdateAsync(id,regionDomainModel);
-            if (regionDomainModel == null)
-            {
-                return NotFound();
-            }
-            
-            
-            //Convert Domain model to Dto
-            //var regionDto = new RegionDto
-            //{
-            //    Id = regionDomainModel.Id,
-            //    Code = regionDomainModel.Code,
-            //    Name = regionDomainModel.Name,
-            //    RegionImageUrl = regionDomainModel.RegionImageUrl
-            //};
-            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
+                //check id region exist
+                regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
+                if (regionDomainModel == null)
+                {
+                    return NotFound();
+                }
 
-            return Ok(regionDto);
+
+                //Convert Domain model to Dto
+                //var regionDto = new RegionDto
+                //{
+                //    Id = regionDomainModel.Id,
+                //    Code = regionDomainModel.Code,
+                //    Name = regionDomainModel.Name,
+                //    RegionImageUrl = regionDomainModel.RegionImageUrl
+                //};
+                var regionDto = mapper.Map<RegionDto>(regionDomainModel);
+
+                return Ok(regionDto);
         }
 
         [HttpDelete]
