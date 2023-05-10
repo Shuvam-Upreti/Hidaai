@@ -5,7 +5,7 @@ namespace HidaaiAPI.Data
 {
     public class HidaaiDbContext:DbContext
     {
-        public HidaaiDbContext(DbContextOptions dbContextOptions):base(dbContextOptions)
+        public HidaaiDbContext(DbContextOptions<HidaaiDbContext> dbContextOptions):base(dbContextOptions)
         {
             
         }

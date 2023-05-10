@@ -4,6 +4,7 @@ using HidaaiAPI.Data;
 using HidaaiAPI.Models.Domain;
 using HidaaiAPI.Models.DTO;
 using HidaaiAPI.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace HidaaiAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly HidaaiDbContext dbContext;

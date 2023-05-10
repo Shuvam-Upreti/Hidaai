@@ -15,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<HidaaiDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("HidaaiConnectionString")));
+builder.Services.AddDbContext<HidaaiAuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("HidaaiAuthConnectionString")));
 
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 
