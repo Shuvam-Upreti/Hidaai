@@ -2,6 +2,7 @@ using HidaaiAPI.Data;
 using HidaaiAPI.Mappings;
 using HidaaiAPI.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -20,6 +21,13 @@ builder.Services.AddDbContext<HidaaiAuthDbContext>(options => options.UseSqlServ
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
+
+builder.Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Hidaai")
+    .AddEntityFrameworkStores<HidaaiAuthDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
