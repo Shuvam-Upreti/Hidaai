@@ -31,21 +31,33 @@ namespace HidaaiAPI.Controllers
                 //Add roles to this User  
                 if (registerRequestDto.Roles != null && registerRequestDto.Roles.Any())
                 {
-                    identityResult =await userManager.AddToRolesAsync(identityUser, registerRequestDto.Roles);
+                    identityResult = await userManager.AddToRolesAsync(identityUser, registerRequestDto.Roles);
                     if (identityResult.Succeeded)
                     {
                         return Ok("User was registerd ! Please Login");
                     }
                 }
             }
-                return BadRequest("Something went wrong");
+            return BadRequest("Something went wrong");
         }
 
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
         {
+            var user = await userManager.FindByEmailAsync(loginRequestDto.Username);
+            if (user != null)
+            {
+                var checkPaswordResult = await userManager.CheckPasswordAsync(user, loginRequestDto.Password);
 
+                if (checkPaswordResult!= null)
+                {
+                    //create token
+
+                }
+
+            }
+            return BadRequest("User not found");
         }
     }
 }
