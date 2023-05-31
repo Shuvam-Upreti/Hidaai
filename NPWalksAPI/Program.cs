@@ -15,21 +15,25 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//connection string
 builder.Services.AddDbContext<HidaaiDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("HidaaiConnectionString")));
 builder.Services.AddDbContext<HidaaiAuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("HidaaiAuthConnectionString")));
 
+
 builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 
+//automapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
-
+//identity with jwt token
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("Hidaai")
     .AddEntityFrameworkStores<HidaaiAuthDbContext>()
     .AddDefaultTokenProviders();
 
-
+//password required
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = false;
@@ -40,7 +44,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 1;
 });
 
-
+//jwt token generation
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
