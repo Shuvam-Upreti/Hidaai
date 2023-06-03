@@ -13,7 +13,7 @@ namespace HidaaiAPI.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly ITokenRepository tokenRepository;
 
-        public AuthController(UserManager<IdentityUser> userManager,ITokenRepository tokenRepository)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
         {
             this.userManager = userManager;
             this.tokenRepository = tokenRepository;
@@ -53,13 +53,17 @@ namespace HidaaiAPI.Controllers
             {
                 var checkPaswordResult = await userManager.CheckPasswordAsync(user, loginRequestDto.Password);
 
-                if (checkPaswordResult!= null)
+                if (checkPaswordResult != null)
                 {
-                    //create token
+                    //Get roles for this user since CreateJwtToken takes user and list of role as parameter
+                    var roles = await userManager.GetRolesAsync(user);
 
+                    if (roles != null)
+                    {
+                        //create token
+                        tokenRepository.CreateJWTToken()
 
-
-
+                    }
                 }
 
             }
