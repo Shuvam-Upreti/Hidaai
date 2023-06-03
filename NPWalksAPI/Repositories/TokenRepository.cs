@@ -40,7 +40,8 @@ namespace HidaaiAPI.Repositories
                 signingCredentials: credentials
                 );
 
-
+            //use token to write it as string
+            return new JwtSecurityTokenHandler().WriteToken(token);
 
         }
     }
