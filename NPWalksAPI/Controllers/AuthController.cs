@@ -1,4 +1,5 @@
 ﻿using HidaaiAPI.Models.DTO;
+using HidaaiAPI.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,12 @@ namespace HidaaiAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
+        private readonly ITokenRepository tokenRepository;
 
-        public AuthController(UserManager<IdentityUser> userManager)
+        public AuthController(UserManager<IdentityUser> userManager,ITokenRepository tokenRepository)
         {
             this.userManager = userManager;
+            this.tokenRepository = tokenRepository;
         }
 
         [HttpPost]
@@ -53,6 +56,9 @@ namespace HidaaiAPI.Controllers
                 if (checkPaswordResult!= null)
                 {
                     //create token
+
+
+
 
                 }
 
