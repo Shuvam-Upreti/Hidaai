@@ -61,8 +61,8 @@ namespace HidaaiAPI.Controllers
                     if (roles != null)
                     {
                         //create token
-                        tokenRepository.CreateJWTToken()
-
+                       var jwtToken= tokenRepository.CreateJWTToken(user, roles.ToList());//roles is IList so convert into List
+                        return Ok(jwtToken);
                     }
                 }
 
