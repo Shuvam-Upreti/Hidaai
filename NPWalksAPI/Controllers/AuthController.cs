@@ -62,7 +62,13 @@ namespace HidaaiAPI.Controllers
                     {
                         //create token
                        var jwtToken= tokenRepository.CreateJWTToken(user, roles.ToList());//roles is IList so convert into List
-                        return Ok(jwtToken);
+
+                        var response = new LoginResponseDto
+                        {
+                            JwtToken=jwtToken
+                        };
+
+                       return Ok(response);
                     }
                 }
 
